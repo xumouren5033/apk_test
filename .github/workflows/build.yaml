@@ -22,8 +22,9 @@ jobs:
         with:
           node-version: '14' # 你可以根据需要修改Node.js版本
       - name: Install Cordova
-        run: npm install -g cordova
-        npm install scratch3-htmlifier
+        run: |
+          npm install -g cordova
+          npm install scratch3-htmlifier
       - name: Convert SB3 to HTML
         run: |
           scratch3-htmlifier ${{ github.event.inputs.file_path }} index.html
