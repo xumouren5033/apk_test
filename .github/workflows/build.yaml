@@ -1,0 +1,30 @@
+name: Build APK from HTML
+on:
+  workflow_dispatch:
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # 你可以根据需要修改Node.js版本
+      - name: Install Cordova
+        run: npm install -g cordova
+      - name: Create Cordova project
+        run: |
+          cordova create my-app com.example.myapp MyApp
+          cd my-app
+          cordova platform add android
+          cp ../index.html www/
+      - name: Build APK
+        run: |
+          cd my-app
+          cordova build android
+      - name: Archive APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-app-apk
+          path: my-app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
