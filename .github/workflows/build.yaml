@@ -1,6 +1,16 @@
 name: Build APK from HTML
 on:
   workflow_dispatch:
+    inputs:
+      app_name:
+        description: '请输入您要打包的项目的名称'
+        required: true
+      app_pkg_name:
+        description: '请输入您要打包的项目的包名（示例：com.<Yourname>.<appname>）'
+        required: true
+      file_path:
+        description: '请输入项目文件以项目根目录为基准的相对路径（仅支持.sb3文件，以“/”作为路径分隔符）'
+        required: true
 jobs:
   build-apk:
     runs-on: ubuntu-latest
@@ -13,9 +23,13 @@ jobs:
           node-version: '14' # 你可以根据需要修改Node.js版本
       - name: Install Cordova
         run: npm install -g cordova
+        npm install scratch3-htmlifier
+      - name: Convert SB3 to HTML
+        run: |
+          scratch3-htmlifier ${{ github.event.inputs.file_path }} index.html
       - name: Create Cordova project
         run: |
-          cordova create my-app com.example.myapp MyApp
+          cordova create my-app ${{ github.event.inputs.app_pkg_name }} ${{ github.event.inputs.app_name }}
           cd my-app
           cordova platform add android
           cp ../index.html www/
