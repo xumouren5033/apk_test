@@ -11,7 +11,13 @@ on:
         required: true
         default: 'com.'
       file_path:
-        description: '请输入html文件以项目根目录为基准的相对路径（以“/”作为路径分隔符）'
+        description: '请输入Python脚本以项目根目录为基准的相对路径（以“/”作为路径分隔符）'
+        required: true
+      icon_path:
+        description: '请输入应用图标以项目根目录为基准的相对路径（以“/”作为路径分隔符）'
+        required: true
+      version:
+        description: '请输入版本号'
         required: true
 
 jobs:
@@ -38,7 +44,7 @@ jobs:
 
       - name: Build APK
         run: |
-          python -m kivy.tools.packaging.kivy_compile --package org.test.myapp --name "My Application" --version 1.0 --private ${{ github.workspace }}/myapp --icon ${{ github.workspace }}/icon.png --orientation landscape --permissions "INTERNET,ACCESS_NETWORK_STATE" --presplash ${{ github.workspace }}/presplash.png --copy-libs
+          python -m kivy.tools.packaging.kivy_compile --package  ${{ github.event.inputs.app_pkg_name }} --name "${{ github.event.inputs.app_name }}" --version 1.0 --private ${{ github.workspace }}/myapp --icon ${{ github.workspace }}/icon.png --orientation landscape --permissions "INTERNET,ACCESS_NETWORK_STATE" --presplash ${{ github.workspace }}/presplash.png --copy-libs
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
