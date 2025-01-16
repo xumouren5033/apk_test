@@ -2,6 +2,17 @@ name: Build APK
 
 on:
   workflow_dispatch:
+    inputs:
+      app_name:
+        description: '请输入您要打包的项目的名称'
+        required: true
+      app_pkg_name:
+        description: '请输入您要打包的项目的包名（示例：com.<Yourname>.<appname>）'
+        required: true
+        default: 'com.'
+      file_path:
+        description: '请输入html文件以项目根目录为基准的相对路径（以“/”作为路径分隔符）'
+        required: true
 
 jobs:
   build-apk:
