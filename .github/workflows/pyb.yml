@@ -1,0 +1,36 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install kivy
+
+      - name: Install Kivy dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev pkg-config libgl1-mesa-dev libgles2-mesa-dev python-gst-1.0 python3-gst-1.0 libgstreamer1.0-dev libmtdev-dev
+
+      - name: Build APK
+        run: |
+          python -m kivy.tools.packaging.kivy_compile --package org.test.myapp --name "My Application" --version 1.0 --private ${{ github.workspace }}/myapp --icon ${{ github.workspace }}/icon.png --orientation landscape --permissions "INTERNET,ACCESS_NETWORK_STATE" --presplash ${{ github.workspace }}/presplash.png --copy-libs
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: myapp.apk
+          path: ${{ github.workspace }}/bin/myapp-1.0-arm64-v8a-debug.apk
