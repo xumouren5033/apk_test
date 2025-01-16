@@ -40,11 +40,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install kivy
 
+      - name: Install PyGObject
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+          pip install PyGObject
+
       - name: Install Kivy dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev pkg-config libgl1-mesa-dev libgles2-mesa-dev python-gst-1.0 python3-gst-1.0 libgstreamer1.0-dev libmtdev-dev
-
+          sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev pkg-config libgl1-mesa-dev libgles2-mesa-dev
       - name: Build APK
         run: |
           python -m kivy.tools.packaging.kivy_compile --package ${{ github.event.inputs.app_pkg_name }} --name "${{ github.event.inputs.app_name }}" --version  ${{ github.event.inputs.version }} --private ${{ github.workspace }}/${{ github.event.inputs.file_path }} --icon ${{ github.workspace }}/${{ github.event.inputs.icon_path }} --orientation landscape --permissions "INTERNET,ACCESS_NETWORK_STATE" --presplash ${{ github.workspace }}/${{ github.event.inputs.startpic_path }} --copy-libs
