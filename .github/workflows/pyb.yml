@@ -43,14 +43,8 @@ jobs:
     - name: 切换到项目目录
       run: |
         cd ${{ github.event.inputs.file_path }}
-
-    - name: 执行buildozer init
-      run: |
         buildozer init
         ls
-
-    - name: 切换到上级目录
-      run: cd ..
 
     - name: 使用python脚本修改buildozer.spec文件
       run: |
