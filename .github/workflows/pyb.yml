@@ -39,7 +39,7 @@ jobs:
     - name: 安装Kivy和Buildozer
       run: |
         pip3 install --upgrade pip setuptools
-        pip3 install kivy buildozer
+        pip3 install kivy buildozer cython
     - name: 切换到项目目录
       run: |
         cd ${{ github.event.inputs.file_path }}
