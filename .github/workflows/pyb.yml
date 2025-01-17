@@ -31,7 +31,15 @@ jobs:
     steps:
     - name: 检出代码
       uses: actions/checkout@v3
+    - name: 安装依赖
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-pip python3-dev libgl1-mesa-dev libgles2-mesa-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev pkg-config libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libmtdev-dev libinput-dev libevdev-dev
 
+    - name: 安装Kivy和Buildozer
+      run: |
+        pip3 install --upgrade pip setuptools
+        pip3 install kivy buildozer
     - name: 切换到项目目录
       run: |
         cd ${{ github.event.inputs.file_path }}
