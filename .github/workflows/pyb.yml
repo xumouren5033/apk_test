@@ -50,10 +50,9 @@ jobs:
       run: |
         python edit.py --app_name ${{ github.event.inputs.app_name }} --package_name ${{ github.event.inputs.package_name }} --domain ${{ github.event.inputs.domain }} --version ${{ github.event.inputs.version }} --project_dir ${{ github.event.inputs.file_path }}
     - name: 切换回项目目录
-      run: cd ${{ github.event.inputs.file_path }}
-
-    - name: 打包APK
-      run: buildozer -v android debug
+      run: |
+        cd ${{ github.event.inputs.file_path }}
+        buildozer -v android debug
 
     - name: 上传APK文件
       uses: actions/upload-artifact@v3
