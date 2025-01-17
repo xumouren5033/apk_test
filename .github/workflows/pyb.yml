@@ -45,7 +45,9 @@ jobs:
         cd ${{ github.event.inputs.file_path }}
 
     - name: 执行buildozer init
-      run: buildozer init
+      run: |
+        buildozer init
+        ls
 
     - name: 切换到上级目录
       run: cd ..
