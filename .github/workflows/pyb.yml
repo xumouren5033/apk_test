@@ -1,61 +1,61 @@
-name: Build APK
+name: Build APK with Buildozer and Kivy
 
 on:
   workflow_dispatch:
     inputs:
       app_name:
-        description: '请输入您要打包的项目的名称'
+        description: '应用名称'
         required: true
-      app_pkg_name:
-        description: '请输入您要打包的项目的包名（示例：com.<Yourname>.<appname>）'
+        type: string
+      package_name:
+        description: '包名'
         required: true
-        default: 'com.'
-      file_path:
-        description: '请输入Python脚本所在目录以项目根目录为基准的相对路径（以“/”作为路径分隔符）'
+        type: string
+      domain:
+        description: '域名'
         required: true
-      icon_path:
-        description: '请输入应用图标以项目根目录为基准的相对路径（以“/”作为路径分隔符，支持常见图片格式）'
-        required: true
+        type: string
       version:
-        description: '请输入版本号'
+        description: '版本号'
         required: true
-      startpic_path:
-        description: '请输入应用启动时显示的图片以项目根目录为基准的相对路径（以“/”作为路径分隔符，支持常见图片格式）'
+        type: string
+      file_path:
+        description: '包含main.py的文件夹（仅限项目根目录算起往下一级）'
         required: true
+        type: string
 
 jobs:
   build-apk:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: 检出代码
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+    - name: 切换到项目目录
+      run: |
+        cd ${{ github.event.inputs.file_path }}
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install kivy
+    - name: 执行buildozer init
+      run: buildozer init
 
-      - name: Install PyGObject
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
-          pip install PyGObject
+    - name: 切换到上级目录
+      run: cd ..
 
-      - name: Install Kivy dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev pkg-config libgl1-mesa-dev libgles2-mesa-dev
-      - name: Build APK
-        run: |
-          python -m kivy.tools.packaging.kivy_compile --package ${{ github.event.inputs.app_pkg_name }} --name "${{ github.event.inputs.app_name }}" --version  ${{ github.event.inputs.version }} --private ${{ github.workspace }}/${{ github.event.inputs.file_path }} --icon ${{ github.workspace }}/${{ github.event.inputs.icon_path }} --orientation landscape --permissions "INTERNET,ACCESS_NETWORK_STATE" --presplash ${{ github.workspace }}/${{ github.event.inputs.startpic_path }} --copy-libs
+    - name: 使用python脚本修改buildozer.spec文件
+      run: |
+        python edit.py --app_name ${{ github.event.inputs.app_name }} --package_name ${{ github.event.inputs.package_name }} --domain ${{ github.event.inputs.domain }} --version ${{ github.event.inputs.version }}
+      env:
+        PROJECT_DIR: ${{ github.event.inputs.file_path }}
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: myapp.apk
-          path: ${{ github.workspace }}/bin/*
+    - name: 切换回项目目录
+      run: cd ${{ env.PROJECT_DIR }}
+
+    - name: 打包APK
+      run: buildozer -v android debug
+
+    - name: 上传APK文件
+      uses: actions/upload-artifact@v3
+      with:
+        name: my_app
+        path: bin/*
