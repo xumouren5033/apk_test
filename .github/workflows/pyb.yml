@@ -52,12 +52,9 @@ jobs:
 
     - name: 使用python脚本修改buildozer.spec文件
       run: |
-        python edit.py --app_name ${{ github.event.inputs.app_name }} --package_name ${{ github.event.inputs.package_name }} --domain ${{ github.event.inputs.domain }} --version ${{ github.event.inputs.version }}
-      env:
-        PROJECT_DIR: ${{ github.event.inputs.file_path }}
-
+        python edit.py --app_name ${{ github.event.inputs.app_name }} --package_name ${{ github.event.inputs.package_name }} --domain ${{ github.event.inputs.domain }} --version ${{ github.event.inputs.version }} --project_dir ${{ github.event.inputs.file_path }}
     - name: 切换回项目目录
-      run: cd ${{ env.PROJECT_DIR }}
+      run: cd ${{ github.event.inputs.file_path }}
 
     - name: 打包APK
       run: buildozer -v android debug
