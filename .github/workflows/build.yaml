@@ -28,6 +28,7 @@ jobs:
       - name: Create Cordova project
         run: |
           cordova create ${{ github.event.inputs.app_name }} ${{ github.event.inputs.app_pkg_name }} ${{ github.event.inputs.app_name }}
+          cd ${{ github.event.inputs.app_name }}
           cordova platform add android
       - name: Commit and push changes
         run: |
